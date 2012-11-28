@@ -15,7 +15,9 @@ import static junit.framework.Assert.assertTrue;
  * Time: 8:42 AM
  */
 public class IssuesTest {
-    @Test
+    //UPDATED THIS TEST BECAUSE WE WANT AN EXCPETION BEING THROWN WHEN TRYING TO ACCESS A LIST
+    // LIKE A MAP
+    @Test(expected=InvalidPathException.class)
     public void issue_7() throws Exception {
 
         String json = "{ \"foo\" : [\n" +
@@ -27,7 +29,7 @@ public class IssuesTest {
 
         assertNull(JsonPath.read(json, "$.foo.id"));
     }
-    
+
     @Test
     public void issue_11() throws Exception {
         String json = "{ \"foo\" : [] }";

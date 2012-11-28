@@ -35,7 +35,8 @@ public class FieldFilter extends PathTokenFilter {
     public Object filter(Object obj, JsonProvider jsonProvider, LinkedList<Filter> filters, boolean inArrayContext) {
         if (jsonProvider.isList(obj)) {
             if (!inArrayContext) {
-                return null;
+                throw new InvalidPathException("Trying to access a list outside of list context.");
+                //return null;
             } else {
                 List<Object> result = jsonProvider.createList();
                 for (Object current : jsonProvider.toList(obj)) {
