@@ -14,22 +14,28 @@
  */
 package com.jayway.jsonpath;
 
-import com.jayway.jsonpath.internal.ConvertUtils;
-import com.jayway.jsonpath.internal.JsonFormatter;
-import com.jayway.jsonpath.internal.PathToken;
-import com.jayway.jsonpath.internal.IOUtils;
-import com.jayway.jsonpath.spi.JsonProvider;
-import com.jayway.jsonpath.spi.JsonProviderFactory;
-import com.jayway.jsonpath.spi.MappingProviderFactory;
+import static java.util.Arrays.asList;
+import static org.apache.commons.lang.Validate.isTrue;
+import static org.apache.commons.lang.Validate.notEmpty;
+import static org.apache.commons.lang.Validate.notNull;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.util.*;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
-import static java.util.Arrays.asList;
-import static org.apache.commons.lang.Validate.*;
-
+import com.jayway.jsonpath.internal.ConvertUtils;
+import com.jayway.jsonpath.internal.IOUtils;
+import com.jayway.jsonpath.internal.JsonFormatter;
+import com.jayway.jsonpath.internal.PathToken;
+import com.jayway.jsonpath.spi.JsonProvider;
+import com.jayway.jsonpath.spi.JsonProviderFactory;
+import com.jayway.jsonpath.spi.MappingProviderFactory;
 /**
  * A JsonModel holds a parsed JSON document and provides easy read and write operations. In contrast to the
  * static read operations provided by {@link JsonPath} a JsonModel will only parse the document once.
@@ -498,8 +504,8 @@ public class JsonModel {
     // --------------------------------------------------------
 
     /**
-     * Creates a JsonModel 
-     * 
+     * Creates a JsonModel
+     *
      * @param json json string
      * @return a new JsonModel
      */
@@ -513,8 +519,8 @@ public class JsonModel {
     }
 
     /**
-     * Creates a JsonModel 
-     * 
+     * Creates a JsonModel
+     *
      * @param jsonObject a json container (a {@link Map} or a {@link List})
      * @return a new JsonModel
      */
@@ -528,8 +534,8 @@ public class JsonModel {
     }
 
     /**
-     * Creates a JsonModel 
-     * 
+     * Creates a JsonModel
+     *
      * @param url pointing to a Json document
      * @return a new JsonModel
      */
@@ -541,10 +547,10 @@ public class JsonModel {
     public static JsonModel create(URL url) throws IOException  {
         return model(url);
     }
-    
+
     /**
-     * Creates a JsonModel 
-     * 
+     * Creates a JsonModel
+     *
      * @param jsonInputStream json document stream
      * @return a new JsonModel
      */
@@ -605,7 +611,7 @@ public class JsonModel {
         if (pathToken.isRootToken()) {
             if (this instanceof JsonSubModel) {
                 JsonSubModel thisModel = (JsonSubModel) this;
-                
+
                 thisModel.parent.setTargetObject(thisModel.subModelPath, newValue);
             } else {
                 this.jsonObject = newValue;
@@ -631,10 +637,10 @@ public class JsonModel {
      */
     public interface ObjectMappingModelReader {
         /**
-         * Converts this JsonModel to the specified class using the configured {@link com.jayway.jsonpath.spi.MappingProvider} 
-         * 
+         * Converts this JsonModel to the specified class using the configured {@link com.jayway.jsonpath.spi.MappingProvider}
+         *
          * @see MappingProviderFactory
-         * 
+         *
          * @param targetClass class to convert the {@link JsonModel} to
          * @param <T> template class
          * @return the mapped model
@@ -648,7 +654,7 @@ public class JsonModel {
     public interface ListMappingModelReader {
         /**
          * Converts this JsonModel to the a list of objects with the provided class using the configured {@link com.jayway.jsonpath.spi.MappingProvider}
-         * 
+         *
          * @param targetClass class to convert the {@link JsonModel} array items to
          * @param <T> template class
          * @return the mapped mode
@@ -662,7 +668,7 @@ public class JsonModel {
 
         /**
          * Converts this JsonModel to the a {@link List} of objects with the provided class using the configured {@link com.jayway.jsonpath.spi.MappingProvider}
-         * 
+         *
          * @param targetClass class to convert the {@link JsonModel} array items to
          * @param <T> template class
          * @return the mapped mode
@@ -671,7 +677,7 @@ public class JsonModel {
 
         /**
          * Converts this JsonModel to the a {@link Set} of objects with the provided class using the configured {@link com.jayway.jsonpath.spi.MappingProvider}
-         * 
+         *
          * @param targetClass class to convert the {@link JsonModel} array items to
          * @param <T> template class
          * @return the mapped model
@@ -681,7 +687,7 @@ public class JsonModel {
 
     /**
      * Object mapping interface used when for root object that can be either a {@link List} or a {@link Map}.
-     * It's up to the invoker to know what the conversion target can be mapped to. 
+     * It's up to the invoker to know what the conversion target can be mapped to.
      */
     public interface MappingModelReader extends ListMappingModelReader, ObjectMappingModelReader {
     }
@@ -692,7 +698,7 @@ public class JsonModel {
     public interface ObjectOps {
 
         /**
-         * Returns the operation target 
+         * Returns the operation target
          * @return the operation target
          */
         Map<String, Object> getTarget();
@@ -820,8 +826,8 @@ public class JsonModel {
          * @return this {@link ArrayOps}
          */
         ArrayOps transform(Transformer<List<Object>> transformer);
-        
-        
+
+
         ArrayOps each(Transformer<Object> transformer);
 
         /**
@@ -842,7 +848,7 @@ public class JsonModel {
 
     private class DefaultObjectOps implements ObjectOps {
 
-        private JsonPath jsonPath;
+        private final JsonPath jsonPath;
 
         private DefaultObjectOps(JsonPath jsonPath) {
             this.jsonPath = jsonPath;
@@ -928,7 +934,7 @@ public class JsonModel {
 
     private class DefaultArrayOps implements ArrayOps {
 
-        private JsonPath jsonPath;
+        private final JsonPath jsonPath;
 
         private DefaultArrayOps(JsonPath jsonPath) {
             this.jsonPath = jsonPath;
@@ -1002,7 +1008,7 @@ public class JsonModel {
     }
 
     private static class DefaultMappingModelReader implements MappingModelReader {
-        private Object model;
+        private final Object model;
 
         private DefaultMappingModelReader(Object model) {
             this.model = model;

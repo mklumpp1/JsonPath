@@ -14,13 +14,13 @@
  */
 package com.jayway.jsonpath.internal.filter;
 
-import com.jayway.jsonpath.Filter;
-import com.jayway.jsonpath.InvalidPathException;
-import com.jayway.jsonpath.spi.JsonProvider;
-
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+
+import com.jayway.jsonpath.Filter;
+import com.jayway.jsonpath.InvalidPathException;
+import com.jayway.jsonpath.spi.JsonProvider;
 
 /**
  * @author Kalle Stenflo
@@ -55,7 +55,7 @@ public class FieldFilter extends PathTokenFilter {
             }
         } else {
             Map<String, Object> map = jsonProvider.toMap(obj);
-            if(!map.containsKey(condition)){
+            if(map == null || !map.containsKey(condition)){
                 throw new InvalidPathException("invalid path");
             } else {
                 return map.get(condition);
@@ -64,6 +64,7 @@ public class FieldFilter extends PathTokenFilter {
     }
 
 
+    @Override
     public Object filter(Object obj, JsonProvider jsonProvider) {
         if (jsonProvider.isList(obj)) {
             return obj;
